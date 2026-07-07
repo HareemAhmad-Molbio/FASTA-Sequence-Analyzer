@@ -3,7 +3,14 @@
 import argparse
 import sys
 from pathlib import Path
-from collections import Counter
+
+from sequence_utils import (
+    gc_content,
+    nucleotide_counts,
+    reverse_complement,
+    transcribe_dna,
+    translate_protein,
+)
 
 try:
     from Bio import SeqIO
@@ -11,9 +18,7 @@ except ImportError:
     print("Biopython is required. Install with: pip install -r requirements.txt")
     sys.exit(1)
 
-
 VALID_BASES = set("ACGTN")
-
 
 def read_fasta(path):
     return list(SeqIO.parse(path, "fasta"))
@@ -35,24 +40,6 @@ def validate_fasta(records):
     return errors
 
 
-def gc_content(seq):
-    seq = seq.upper()
-    if not seq:
-        return 0.0
-    gc = seq.count("G") + seq.count("C")
-    atgc = sum(seq.count(b) for b in "ACGT")
-    if atgc == 0:
-        return 0.0
-    return (gc / atgc) * 100
-
-
-def nucleotide_counts(records):
-    counts = Counter()
-    for record in records:
-        counts.update(str(record.seq).upper())
-    return {base: counts.get(base, 0) for base in ["A", "T", "G", "C", "N"]}
-
-
 def summarize(records, source_name):
     lengths = [len(r.seq) for r in records]
     total_bases = sum(lengths)
@@ -70,8 +57,21 @@ def summarize(records, source_name):
     report.append(f"Min length: {min(lengths) if lengths else 0}")
     report.append(f"Max length: {max(lengths) if lengths else 0}")
     report.append(f"GC content: {gc_content(all_seq):.2f}%")
+
+    # Preview only the first 90 bases
+    preview = all_seq[:90]
+
+    report.append("")
+    report.append("Sequence Preview")
+    report.append("-" * 30)
+    report.append(f"DNA                : {preview}")
+    report.append(f"RNA                : {transcribe_dna(preview)}")
+    report.append(f"Reverse Complement : {reverse_complement(preview)}")
+    report.append(f"Protein            : {translate_protein(preview)}")
+
     report.append("")
     report.append("Nucleotide counts:")
+
     counts = nucleotide_counts(records)
     for base in ["A", "T", "G", "C", "N"]:
         report.append(f"{base}: {counts[base]}")
