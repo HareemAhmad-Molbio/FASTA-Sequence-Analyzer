@@ -45,3 +45,19 @@ def translate_protein(seq):
     dna = dna[:usable]
 
     return str(dna.translate())
+
+def find_motif(seq, motif):
+    """
+    Find all occurrences of a DNA motif.
+    Returns a list of starting positions (1-based indexing).
+    """
+    seq = seq.upper()
+    motif = motif.upper()
+
+    positions = []
+
+    for i in range(len(seq) - len(motif) + 1):
+        if seq[i:i + len(motif)] == motif:
+            positions.append(i + 1)
+
+    return positions
