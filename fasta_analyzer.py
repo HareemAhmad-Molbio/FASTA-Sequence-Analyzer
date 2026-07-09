@@ -11,6 +11,7 @@ from sequence_utils import (
     transcribe_dna,
     translate_protein,
     find_motif,
+    find_restriction_sites,
 )
 
 try:
@@ -114,6 +115,12 @@ def main():
         help="Search for a DNA motif",
         default=None,
     )
+    
+    parser.add_argument(
+        "--enzyme",
+        help="Search for a restriction enzyme recognition site",
+        default=None,
+    )
 
     args = parser.parse_args()
 
@@ -158,6 +165,49 @@ def main():
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(report + "\n", encoding="utf-8")
 
+    if args.find:
+       ...
+    else:
+        report += "Motif not found."
+
+
+    if args.enzyme:
+        all_seq = "".join(str(record.seq) for record in records)
+
+        recognition_site, positions = find_restriction_sites(
+        all_seq,
+        args.enzyme,
+    )
+
+        report += "\n\n"
+        report += "Restriction Enzyme Analysis\n"
+        report += "=" * 40 + "\n"
+
+        if recognition_site is None:
+            report += f"Unknown enzyme: {args.enzyme}\n"
+        else:
+            report += f"Enzyme: {args.enzyme}\n"
+            report += f"Recognition Site: {recognition_site}\n"
+            report += f"Occurrences: {len(positions)}\n"
+
+        if positions:
+            report += "Positions:\n"
+            report += ", ".join(map(str, positions))
+        else:
+            report += "Recognition site not found."
+
+
+    if errors:
+        report += "\n\nValidation warnings:\n"
+
+    for err in errors:
+        report += f"- {err}\n"
+
+
+    print(report)
+
+    if args.output:
+        ...
 
 if __name__ == "__main__":
     main()

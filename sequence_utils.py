@@ -1,6 +1,13 @@
 from collections import Counter
 from Bio.Seq import Seq
 
+RESTRICTION_ENZYMES = {
+    "EcoRI": "GAATTC",
+    "BamHI": "GGATCC",
+    "HindIII": "AAGCTT",
+    "NotI": "GCGGCCGC",
+    "XhoI": "CTCGAG",
+}
 
 
 def gc_content(seq):
@@ -61,3 +68,19 @@ def find_motif(seq, motif):
             positions.append(i + 1)
 
     return positions
+
+def find_restriction_sites(seq, enzyme):
+    """
+    Find restriction enzyme recognition sites.
+
+    Returns:
+        recognition_site, positions
+    """
+
+    if enzyme not in RESTRICTION_ENZYMES:
+        return None, []
+
+    recognition_site = RESTRICTION_ENZYMES[enzyme]
+    positions = find_motif(seq, recognition_site)
+
+    return recognition_site, positions
