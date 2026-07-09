@@ -1,8 +1,8 @@
 # 🧬 FASTA Sequence Analyzer
 
-A professional bioinformatics command-line application built with **Python** and **Biopython** for analyzing DNA sequences stored in **FASTA** format.
+A modular **Python** and **Biopython** command-line application for analyzing DNA sequences stored in **FASTA** format.
 
-The project performs sequence validation, nucleotide composition analysis, GC content calculation, DNA transcription, protein translation, reverse complement generation, and produces detailed sequence reports.
+The project performs sequence validation, nucleotide composition analysis, GC content calculation, DNA transcription, protein translation, motif searching, restriction enzyme recognition site analysis, and generates detailed analysis reports.
 
 ---
 
@@ -10,12 +10,14 @@ The project performs sequence validation, nucleotide composition analysis, GC co
 
 - Overview
 - Features
+- Sequence Analysis
+- Supported Restriction Enzymes
 - Project Structure
 - Installation
 - Usage
 - Example Output
 - Technologies
-- Roadmap
+- Development Roadmap
 - Future Improvements
 - Contributing
 - License
@@ -27,47 +29,68 @@ The project performs sequence validation, nucleotide composition analysis, GC co
 
 FASTA Sequence Analyzer is a modular bioinformatics toolkit designed to analyze DNA sequences stored in FASTA files.
 
-The project demonstrates practical applications of:
+This project demonstrates practical applications of:
 
 - Bioinformatics
 - Molecular Biology
 - Computational Biology
 - Scientific Python Programming
+- Command-Line Application Development
 
-This repository is intended both as a learning project and as a portfolio project demonstrating software development for biological data analysis.
+The project is intended both as a learning resource and as a professional portfolio project demonstrating software development for biological data analysis.
 
 ---
 
 # ✨ Features
 
-## ✅ Current Features (Version 2.0)
+## ✅ Current Features (Version 2.2)
 
 - Read FASTA files
-- Parse single and multi-FASTA sequences
+- Parse single and multi-FASTA files
 - Validate nucleotide sequences
 - Detect invalid DNA characters
-- Calculate GC Content
-- Calculate sequence statistics
+- Calculate GC content
+- Generate sequence statistics
 - Count nucleotide composition (A, T, G, C, N)
-- Generate Reverse Complement
-- DNA → RNA Transcription
-- DNA → Protein Translation
+- Generate reverse complements
+- DNA → RNA transcription
+- DNA → Protein translation
+- DNA motif search
+- Restriction enzyme recognition site analysis
 - Export reports to text files
-- Modular project architecture
+- Modular Python architecture
 
 ---
 
 # 🧬 Sequence Analysis
 
-Current biological analyses include:
-
 | Analysis | Description |
 |----------|-------------|
 | GC Content | Calculates percentage of G and C nucleotides |
-| Nucleotide Counts | Counts A, T, G, C and N |
+| Nucleotide Counts | Counts A, T, G, C and N bases |
 | Reverse Complement | Generates reverse complementary DNA strand |
-| DNA → RNA | Transcribes DNA into RNA |
-| DNA → Protein | Translates coding DNA into amino acid sequence |
+| DNA → RNA | Converts DNA into RNA |
+| DNA → Protein | Translates DNA into amino acid sequence |
+| DNA Motif Search | Finds user-defined DNA motifs |
+| Restriction Enzyme Analysis | Detects recognition sites of common restriction enzymes |
+
+---
+
+# 🧪 Supported Restriction Enzymes
+
+| Enzyme | Recognition Sequence |
+|---------|----------------------|
+| EcoRI | GAATTC |
+| BamHI | GGATCC |
+| HindIII | AAGCTT |
+| NotI | GCGGCCGC |
+| XhoI | CTCGAG |
+
+Example:
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --enzyme EcoRI
+```
 
 ---
 
@@ -77,7 +100,7 @@ Current biological analyses include:
 FASTA-Sequence-Analyzer/
 │
 ├── fasta_analyzer.py          # Main application
-├── sequence_utils.py          # Sequence analysis functions
+├── sequence_utils.py          # Sequence utility functions
 ├── requirements.txt
 ├── README.md
 ├── LICENSE
@@ -89,8 +112,6 @@ FASTA-Sequence-Analyzer/
 ├── output/
 │
 ├── screenshots/
-│
-└── plots/
 ```
 
 ---
@@ -135,13 +156,15 @@ pip install -r requirements.txt
 
 # 🚀 Usage
 
-Analyze a FASTA sequence
+### Analyze a FASTA file
 
 ```bash
 python fasta_analyzer.py sample_data/human_gene.fasta
 ```
 
-Generate a report
+---
+
+### Export report
 
 ```bash
 python fasta_analyzer.py sample_data/human_gene.fasta --output output/report.txt
@@ -149,24 +172,55 @@ python fasta_analyzer.py sample_data/human_gene.fasta --output output/report.txt
 
 ---
 
+### Search for a DNA motif
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --find ATG
+```
+
+---
+
+### Search for a restriction enzyme
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --enzyme EcoRI
+```
+# 📸 Screenshots
+
+## FASTA Sequence Analysis
+
+![FASTA Analyzer](screenshots/analyzer_output.png)
+
+---
+
+## DNA Motif Search
+
+![Motif Search](screenshots/motif_search.png)
+
+---
+
+## Restriction Enzyme Analysis
+
+![Restriction Enzyme](screenshots/restriction_enzyme.png)
+---
+
 # 📄 Example Output
 
 ```text
 FASTA Sequence Analyzer Report
-==============================
+========================================
 
 File: sample_data/human_gene.fasta
 
 Records: 1
-
 Total Bases: 126033
-
 Average Length: 126033
-
+Minimum Length: 126033
+Maximum Length: 126033
 GC Content: 44.10%
 
 Sequence Preview
-==============================
+----------------------------------------
 
 DNA
 CTTTCTGTCCCCGCCCTTCCTCTGACTGTGT...
@@ -183,22 +237,30 @@ LSVPPFL*LCLDFLF*EAIAQRFPWQQ*SV
 Nucleotide Counts
 
 A : 35147
-
 T : 35309
-
 G : 28369
-
 C : 27208
-
 N : 0
+
+Motif Search
+
+Motif: ATG
+Occurrences: 57
+
+Restriction Enzyme Analysis
+
+Enzyme: EcoRI
+Recognition Site: GAATTC
+Occurrences: 0
 ```
+
 ---
 
 # 🧪 Example Dataset
 
-This repository contains an example FASTA file for testing.
+The repository contains a sample FASTA file for testing.
 
-Public datasets can also be downloaded from:
+Additional public datasets can be obtained from:
 
 - NCBI
 - Ensembl
@@ -222,15 +284,16 @@ Public datasets can also be downloaded from:
 
 | Version | Status | Features |
 |----------|--------|----------|
-| ✅ Version 1.0 | Complete | FASTA parsing, validation, GC content, nucleotide statistics |
-| ✅ Version 2.0 | Complete | Reverse complement, DNA→RNA transcription, DNA→Protein translation |
-| 🚧 Version 2.1 | In Progress | Motif Search |
-| ⏳ Version 3.0 | Planned | Open Reading Frame (ORF) Finder |
-| ⏳ Version 4.0 | Planned | Restriction Enzyme Analysis |
-| ⏳ Version 5.0 | Planned | Sequence Visualizations |
-| ⏳ Version 6.0 | Planned | HTML & PDF Reports |
-| ⏳ Version 7.0 | Planned | Interactive Command-Line Interface |
-| ⏳ Version 8.0 | Planned | Desktop GUI |
+| ✅ v1.0 | Complete | FASTA parsing, validation, GC content, nucleotide counts |
+| ✅ v2.0 | Complete | Reverse complement, DNA→RNA transcription, DNA→Protein translation |
+| ✅ v2.1 | Complete | DNA motif search |
+| ✅ v2.2 | Complete | Restriction enzyme recognition site analysis |
+| 🚧 v3.0 | In Development | Open Reading Frame (ORF) Finder |
+| ⏳ v4.0 | Planned | GC Content & Nucleotide Composition Plots |
+| ⏳ v5.0 | Planned | HTML & PDF Report Generation |
+| ⏳ v6.0 | Planned | Batch FASTA Analysis |
+| ⏳ v7.0 | Planned | Interactive CLI |
+| ⏳ v8.0 | Planned | Desktop GUI |
 
 ---
 
@@ -238,16 +301,19 @@ Public datasets can also be downloaded from:
 
 Planned additions include:
 
-- DNA Motif Search
-- Open Reading Frame Detection
-- Restriction Enzyme Site Finder
-- GC Content Graphs
+- Open Reading Frame (ORF) Finder
+- Six-frame Translation
+- Batch FASTA Analysis
+- GC Content Visualization
 - Nucleotide Composition Charts
+- Codon Usage Analysis
 - Sequence Alignment
 - HTML Reports
 - PDF Reports
+- Interactive CLI
 - Desktop GUI
 - Unit Testing
+- Continuous Integration (GitHub Actions)
 - PyPI Package Distribution
 
 ---
@@ -256,12 +322,13 @@ Planned additions include:
 
 Contributions, suggestions, and feature requests are welcome.
 
-If you'd like to contribute:
+If you would like to contribute:
 
 1. Fork the repository
-2. Create a new branch
+2. Create a new feature branch
 3. Commit your changes
-4. Submit a Pull Request
+4. Push the branch
+5. Open a Pull Request
 
 ---
 
@@ -269,7 +336,7 @@ If you'd like to contribute:
 
 This project is licensed under the MIT License.
 
-See the LICENSE file for details.
+See the **LICENSE** file for more details.
 
 ---
 
@@ -277,11 +344,17 @@ See the LICENSE file for details.
 
 **Hareem Ahmad**
 
-M.Sc. Molecular Biology & Biochemistry
+**M.Sc. Molecular Biology & Biochemistry**
 
-Bioinformatics • Molecular Biology • Computational Biology
+**Interests**
+
+- Bioinformatics
+- Molecular Biology
+- Computational Biology
+- Scientific Programming
 
 GitHub:
+
 https://github.com/HareemAhmad-Molbio
 
 ---
@@ -290,4 +363,4 @@ https://github.com/HareemAhmad-Molbio
 
 If you found this project useful, consider giving it a ⭐ on GitHub.
 
-It helps support the project and encourages future development.
+Your support helps improve the project and encourages future development.
