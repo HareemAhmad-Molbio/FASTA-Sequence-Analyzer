@@ -84,3 +84,48 @@ def find_restriction_sites(seq, enzyme):
     positions = find_motif(seq, recognition_site)
 
     return recognition_site, positions
+
+def find_longest_orf(seq):
+    """
+    Find the longest ORF in the forward strand.
+    """
+
+    seq = seq.upper()
+
+    start_codon = "ATG"
+    stop_codons = {"TAA", "TAG", "TGA"}
+
+    longest = ("", 0, 0)
+
+    i = 0
+
+    while i < len(seq) - 2:
+
+        codon = seq[i:i+3]
+
+        if codon == start_codon:
+
+            j = i
+
+            while j < len(seq) - 2:
+
+                current = seq[j:j+3]
+
+                if current in stop_codons:
+
+                    orf = seq[i:j+3]
+
+                    if len(orf) > len(longest[0]):
+                        longest = (
+                            orf,
+                            i + 1,
+                            j + 3,
+                        )
+
+                    break
+
+                j += 3
+
+        i += 1
+
+    return longest

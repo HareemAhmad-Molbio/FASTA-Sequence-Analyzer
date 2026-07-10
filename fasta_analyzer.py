@@ -12,6 +12,7 @@ from sequence_utils import (
     translate_protein,
     find_motif,
     find_restriction_sites,
+    find_longest_orf,
 )
 
 try:
@@ -122,6 +123,12 @@ def main():
         default=None,
     )
 
+    parser.add_argument(
+        "--orf",
+        action="store_true",
+        help="Find the longest Open Reading Frame",
+    )
+
     args = parser.parse_args()
 
     fasta_path = Path(args.input)
@@ -196,6 +203,32 @@ def main():
         else:
             report += "Recognition site not found."
 
+    if args.orf:
+
+        all_seq = "".join(str(record.seq) for record in records)
+
+        orf, start, end = find_longest_orf(all_seq)
+
+        report += "\n\n"
+        report += "Open Reading Frame Analysis\n"
+        report += "=" * 40 + "\n"
+
+        if orf:
+
+            protein = translate_protein(orf)
+
+            report += f"Start Position : {start}\n"
+            report += f"End Position   : {end}\n"
+            report += f"Length         : {len(orf)} bp\n"
+            report += f"Protein Length : {len(protein)} aa\n"
+
+            report += "\nProtein Preview\n"
+
+            report += protein[:60]
+
+        else:
+
+            report += "No ORF found."
 
     if errors:
         report += "\n\nValidation warnings:\n"
