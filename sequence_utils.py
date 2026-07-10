@@ -129,3 +129,51 @@ def find_longest_orf(seq):
         i += 1
 
     return longest
+
+def find_all_orfs(seq):
+    """
+    Find all ORFs in the forward strand (Frame +1).
+
+    Returns:
+        List of dictionaries containing ORF information.
+    """
+
+    seq = seq.upper()
+
+    start_codon = "ATG"
+    stop_codons = {"TAA", "TAG", "TGA"}
+
+    orfs = []
+
+    i = 0
+
+    while i < len(seq) - 2:
+
+        if seq[i:i+3] == start_codon:
+
+            j = i + 3
+
+            while j < len(seq) - 2:
+
+                codon = seq[j:j+3]
+
+                if codon in stop_codons:
+
+                    dna = seq[i:j+3]
+
+                    protein = translate_protein(dna)
+
+                    orfs.append({
+                        "start": i + 1,
+                        "end": j + 3,
+                        "length": len(dna),
+                        "protein": protein,
+                    })
+
+                    break
+
+                j += 3
+
+        i += 1
+
+    return orfs

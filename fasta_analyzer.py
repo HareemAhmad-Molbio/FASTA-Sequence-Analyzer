@@ -13,6 +13,7 @@ from sequence_utils import (
     find_motif,
     find_restriction_sites,
     find_longest_orf,
+    find_all_orfs,
 )
 
 try:
@@ -207,28 +208,36 @@ def main():
 
         all_seq = "".join(str(record.seq) for record in records)
 
-        orf, start, end = find_longest_orf(all_seq)
+        orfs = find_all_orfs(all_seq)
 
         report += "\n\n"
         report += "Open Reading Frame Analysis\n"
         report += "=" * 40 + "\n"
 
-        if orf:
+        report += f"Total ORFs Found: {len(orfs)}\n\n"
 
-            protein = translate_protein(orf)
+        if orfs:
 
-            report += f"Start Position : {start}\n"
-            report += f"End Position   : {end}\n"
-            report += f"Length         : {len(orf)} bp\n"
-            report += f"Protein Length : {len(protein)} aa\n"
+            orfs.sort(key=lambda x: x["length"], reverse=True)
 
-            report += "\nProtein Preview\n"
+            for index, orf in enumerate(orfs[:10], start=1):
 
-            report += protein[:60]
+                report += f"ORF #{index}\n"
+                report += "-" * 40 + "\n"
+
+                report += f"Start Position : {orf['start']}\n"
+                report += f"End Position   : {orf['end']}\n"
+                report += f"Length         : {orf['length']} bp\n"
+                report += f"Protein Length : {len(orf['protein'])} aa\n"
+
+                if index == 1:
+                    report += "⭐ Longest ORF\n"
+
+                report += "\n"
 
         else:
 
-            report += "No ORF found."
+            report += "No ORFs found.\n"
 
     if errors:
         report += "\n\nValidation warnings:\n"
