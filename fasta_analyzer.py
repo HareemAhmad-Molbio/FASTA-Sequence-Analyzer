@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from sequence_utils import (
+    find_orfs_in_frame,
     gc_content,
     nucleotide_counts,
     reverse_complement,
@@ -13,7 +14,7 @@ from sequence_utils import (
     find_motif,
     find_restriction_sites,
     find_longest_orf,
-    find_all_orfs,
+    find_orfs_in_frame,
 )
 
 try:
@@ -144,6 +145,13 @@ def main():
         help="Number of longest ORFs to display",
     )
 
+    parser.add_argument(
+        "--frame",
+        default="1",
+        choices=["1", "2", "3", "all"],
+        help="Reading frame (1, 2, 3, or all)",
+    )
+
     args = parser.parse_args()
 
     fasta_path = Path(args.input)
@@ -222,23 +230,35 @@ def main():
 
         all_seq = "".join(str(record.seq) for record in records)
 
-        orfs = find_all_orfs(
-            all_seq,
-            args.min_length
-        )
+        if args.frame == "all":
+            frames = [0, 1, 2]
+        else:
+            frames = [int(args.frame) - 1]
 
         report += "\n\n"
         report += "Open Reading Frame Analysis\n"
-        report += "=" * 40 + "\n"
+        report += "=" * 50 + "\n"
 
-        report += f"Minimum ORF Length : {args.min_length} bp\n"
-        report += f"Total ORFs Found   : {len(orfs)}\n"
-        report += f"Showing Top        : {min(args.top, len(orfs))}\n"
-        report += "\n"
+        for frame in frames:
 
-        if orfs:
+            orfs = find_orfs_in_frame(
+                all_seq,
+                frame,
+                args.min_length,
+            )
 
-            orfs.sort(key=lambda x: x["length"], reverse=True)
+            orfs.sort(
+                key=lambda x: x["length"],
+                reverse=True,
+            )
+
+            report += f"\nFrame +{frame + 1}\n"
+            report += "-" * 50 + "\n"
+
+            report += f"Minimum ORF Length : {args.min_length} bp\n"
+            report += f"Total ORFs Found   : {len(orfs)}\n"
+            report += f"Showing Top ORFs   : {min(args.top, len(orfs))}\n\n"
+
 
             for index, orf in enumerate(orfs[:args.top], start=1):
 
@@ -251,14 +271,13 @@ def main():
                 report += f"Protein Length : {len(orf['protein'])} aa\n"
 
                 if index == 1:
-                    report += "⭐ Longest ORF\n"
+                    report += "⭐ Longest ORF in Frame\n"
 
                 report += "\n"
 
-        else:
+            report += "=" * 50 + "\n"
 
-            report += "No ORFs found.\n"
-
+    
     if errors:
         report += "\n\nValidation warnings:\n"
 

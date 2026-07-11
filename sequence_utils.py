@@ -130,52 +130,70 @@ def find_longest_orf(seq):
 
     return longest
 
-def find_all_orfs(seq, min_length=0):
-    """
-    Find all ORFs in the forward strand (Frame +1).
 
-    Returns:
-        List of dictionaries containing ORF information.
+def find_orfs_in_frame(seq, frame=0, min_length=0):
+    """
+    Find all ORFs in one reading frame.
+
+    Parameters
+    ----------
+    seq : str
+        DNA sequence
+    frame : int
+        Reading frame (0,1,2)
+    min_length : int
+        Minimum ORF length in bp
+
+    Returns
+    -------
+    list
+        List of ORFs
     """
 
     seq = seq.upper()
 
-    start_codon = "ATG"
     stop_codons = {"TAA", "TAG", "TGA"}
 
     orfs = []
 
-    i = 0
+    inside_orf = False
+    start = None
+    current_codons = []
 
-    while i < len(seq) - 2:
+    for i in range(frame, len(seq) - 2, 3):
 
-        if seq[i:i+3] == start_codon:
+        codon = seq[i:i+3]
 
-            j = i + 3
+        if not inside_orf:
 
-            while j < len(seq) - 2:
+            if codon == "ATG":
+                inside_orf = True
+                start = i
+                current_codons = [codon]
 
-                codon = seq[j:j+3]
+            continue
 
-                if codon in stop_codons:
+        current_codons.append(codon)
 
-                    dna = seq[i:j+3]
+        if codon not in stop_codons:
+            continue
 
-                    if len(dna) >= min_length:
+        dna = "".join(current_codons)
 
-                        protein = translate_protein(dna)
+        if len(dna) >= min_length:
 
-                        orfs.append({
-                            "start": i + 1,
-                            "end": j + 3,
-                            "length": len(dna),
-                            "protein": protein,
-                        })
+            protein = translate_protein(dna)
 
-                    break
+            orfs.append({
+                "frame": frame + 1,
+                "start": start + 1,
+                "end": i + 3,
+                "length": len(dna),
+                "protein": protein,
+            })
 
-                j += 3
+            inside_orf = False
+            start = None
+            current_codons = []
 
-        i += 1
-
-    return orfs
+            return orfs
