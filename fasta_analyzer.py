@@ -3,6 +3,11 @@
 import argparse
 import sys
 from pathlib import Path
+from visualization import (
+    plot_nucleotide_counts,
+    plot_orf_overview,
+    plot_orf_comparison,
+)
 
 from sequence_utils import (
     find_orfs_in_frame,
@@ -128,14 +133,14 @@ def main():
     parser.add_argument(
         "--orf",
         action="store_true",
-        help="Find the longest Open Reading Frame",
+        help="Perform Open Reading Frame (ORF) analysis",
     )
 
     parser.add_argument(
         "--min-length",
         type=int,
-        default=0,
-        help="Minimum ORF length in base pairs",
+        default=300,
+        help="Minimum ORF length in base pairs (default: 300)",
     )
 
     parser.add_argument(
@@ -152,6 +157,12 @@ def main():
         help="Reading frame (1, 2, 3, or all)",
     )
 
+    parser.add_argument(
+        "--plot",
+        action="store_true",
+        help="Generate visualization plots",
+    )
+
     args = parser.parse_args()
 
     fasta_path = Path(args.input)
@@ -161,6 +172,16 @@ def main():
         sys.exit(1)
 
     records = read_fasta(str(fasta_path))
+
+    counts = nucleotide_counts(records)
+
+    if args.plot:
+        plot_nucleotide_counts(
+            counts,
+            "output/nucleotide_counts.png",
+        )
+        print("Visualization saved to: output/nucleotide_counts.png")
+
     errors = validate_fasta(records)
 
     report = summarize(records, str(fasta_path))
@@ -188,7 +209,6 @@ def main():
         for err in errors:
             report += f"- {err}\n"
 
-    print(report)
 
     if args.output:
         out_path = Path(args.output)
@@ -198,7 +218,7 @@ def main():
     if args.find:
        ...
     else:
-        report += "Motif not found."
+        report += "Motif not found.\n"
 
 
     if args.enzyme:
@@ -239,6 +259,8 @@ def main():
         report += "Open Reading Frame Analysis\n"
         report += "=" * 50 + "\n"
 
+        orfs_by_frame = {}
+
         for frame in frames:
 
             orfs = find_orfs_in_frame(
@@ -251,6 +273,8 @@ def main():
                 key=lambda x: x["length"],
                 reverse=True,
             )
+
+            orfs_by_frame[f"Frame +{frame + 1}"] = orfs
 
             report += f"\nFrame +{frame + 1}\n"
             report += "-" * 50 + "\n"
@@ -284,6 +308,12 @@ def main():
     for err in errors:
         report += f"- {err}\n"
 
+    if args.plot:
+        plot_orf_comparison(
+        orfs_by_frame,
+        "output/orf_comparison.png",
+    )
+    
 
     print(report)
 

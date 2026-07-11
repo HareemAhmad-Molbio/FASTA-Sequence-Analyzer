@@ -190,8 +190,9 @@ def find_orfs_in_frame(seq, frame=0, min_length=0):
                 "end": i + 3,
                 "length": len(dna),
                 "protein": protein,
+                "dna": dna,
             })
-
+            
             inside_orf = False
             start = None
             current_codons = []
