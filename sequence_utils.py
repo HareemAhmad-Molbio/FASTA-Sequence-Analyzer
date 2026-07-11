@@ -130,7 +130,7 @@ def find_longest_orf(seq):
 
     return longest
 
-def find_all_orfs(seq):
+def find_all_orfs(seq, min_length=0):
     """
     Find all ORFs in the forward strand (Frame +1).
 
@@ -161,14 +161,16 @@ def find_all_orfs(seq):
 
                     dna = seq[i:j+3]
 
-                    protein = translate_protein(dna)
+                    if len(dna) >= min_length:
 
-                    orfs.append({
-                        "start": i + 1,
-                        "end": j + 3,
-                        "length": len(dna),
-                        "protein": protein,
-                    })
+                        protein = translate_protein(dna)
+
+                        orfs.append({
+                            "start": i + 1,
+                            "end": j + 3,
+                            "length": len(dna),
+                            "protein": protein,
+                        })
 
                     break
 

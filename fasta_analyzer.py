@@ -130,6 +130,20 @@ def main():
         help="Find the longest Open Reading Frame",
     )
 
+    parser.add_argument(
+        "--min-length",
+        type=int,
+        default=0,
+        help="Minimum ORF length in base pairs",
+    )
+
+    parser.add_argument(
+        "--top",
+        type=int,
+        default=10,
+        help="Number of longest ORFs to display",
+    )
+
     args = parser.parse_args()
 
     fasta_path = Path(args.input)
@@ -208,19 +222,25 @@ def main():
 
         all_seq = "".join(str(record.seq) for record in records)
 
-        orfs = find_all_orfs(all_seq)
+        orfs = find_all_orfs(
+            all_seq,
+            args.min_length
+        )
 
         report += "\n\n"
         report += "Open Reading Frame Analysis\n"
         report += "=" * 40 + "\n"
 
-        report += f"Total ORFs Found: {len(orfs)}\n\n"
+        report += f"Minimum ORF Length : {args.min_length} bp\n"
+        report += f"Total ORFs Found   : {len(orfs)}\n"
+        report += f"Showing Top        : {min(args.top, len(orfs))}\n"
+        report += "\n"
 
         if orfs:
 
             orfs.sort(key=lambda x: x["length"], reverse=True)
 
-            for index, orf in enumerate(orfs[:10], start=1):
+            for index, orf in enumerate(orfs[:args.top], start=1):
 
                 report += f"ORF #{index}\n"
                 report += "-" * 40 + "\n"
