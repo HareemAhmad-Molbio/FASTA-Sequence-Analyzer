@@ -1,39 +1,77 @@
-# FASTA Sequence Analyzer
+# 🧬 FASTA Sequence Analyzer
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-![Biopython](https://img.shields.io/badge/Biopython-Latest-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+A Python-based bioinformatics toolkit for analyzing DNA FASTA sequences. This project provides sequence statistics, motif searching, restriction enzyme analysis, multi-frame Open Reading Frame (ORF) detection, and publication-quality genomic visualizations.
 
-A comprehensive command-line bioinformatics toolkit for analyzing DNA sequences from FASTA files. This project provides sequence validation, nucleotide statistics, transcription, translation, motif searching, restriction enzyme analysis, and multi-frame Open Reading Frame (ORF) detection.
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Biopython](https://img.shields.io/badge/Biopython-Latest-green)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-orange)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Status](https://img.shields.io/badge/Status-Stable-brightgreen)
 
 ---
 
-## Features
+# 📖 Overview
 
-- Read and parse FASTA files
-- Validate DNA sequences
-- Calculate GC content
-- Count nucleotide composition (A, T, G, C, N)
-- Generate reverse complement sequences
+FASTA Sequence Analyzer is a command-line bioinformatics application developed in Python for DNA sequence analysis. It combines commonly used molecular biology analyses with publication-quality visualizations, making it suitable for students, researchers, and anyone learning bioinformatics.
+
+The toolkit currently supports:
+
+- FASTA sequence parsing
+- Sequence validation
+- Nucleotide composition analysis
+- GC content calculation
 - DNA → RNA transcription
-- DNA → Protein translation
+- Protein translation
+- Reverse complement generation
 - DNA motif searching
 - Restriction enzyme recognition site analysis
-- Open Reading Frame (ORF) analysis
-- Three forward reading frame analysis (+1, +2, +3)
-- Minimum ORF length filtering
-- Display Top-N longest ORFs
-- Export analysis reports
+- Three-frame Open Reading Frame (ORF) detection
+- Scientific visualizations
 
 ---
 
-## Project Structure
+# ✨ Features
 
-```
-FASTA-Sequence-Analyzer
+## 🧬 Sequence Analysis
+
+- FASTA file parsing
+- Sequence validation
+- Nucleotide composition
+- GC content calculation
+- DNA → RNA transcription
+- Reverse complement generation
+- Protein translation
+
+---
+
+## 🔬 Biological Analysis
+
+- DNA motif search
+- Restriction enzyme recognition site detection
+- Three-frame ORF detection
+- Configurable minimum ORF length
+- Longest ORF identification
+- Multi-frame ORF comparison
+
+---
+
+## 📊 Scientific Visualizations
+
+- DNA nucleotide composition chart
+- Sliding-window GC content analysis
+- Genome-wide ORF overview
+- Longest ORF comparison between reading frames
+
+---
+
+# 📂 Project Structure
+
+```text
+FASTA-Sequence-Analyzer/
 │
 ├── fasta_analyzer.py          # Main CLI application
-├── sequence_utils.py          # Bioinformatics utility functions
+├── sequence_utils.py          # Sequence analysis functions
+├── visualization.py           # Plotting and visualization
 ├── requirements.txt
 ├── README.md
 ├── LICENSE
@@ -41,40 +79,44 @@ FASTA-Sequence-Analyzer
 ├── sample_data/
 │   └── human_gene.fasta
 │
-├── screenshots/
+├── output/
+│   ├── nucleotide_counts.png
+│   ├── gc_content.png
+│   ├── orf_overview.png
+│   └── orf_comparison.png
 │
-└── output/
+└── screenshots/
 ```
 
 ---
 
-## Installation
+# ⚙️ Installation
 
-Clone the repository
+Clone the repository:
 
 ```bash
 git clone https://github.com/HareemAhmad-Molbio/FASTA-Sequence-Analyzer.git
-```
 
-Move into the project
-
-```bash
 cd FASTA-Sequence-Analyzer
 ```
 
-Create a virtual environment
+Create a virtual environment:
+
+```bash
+python3 -m venv venv
+```
+
+Activate the environment
 
 ### macOS / Linux
 
 ```bash
-python3 -m venv venv
 source venv/bin/activate
 ```
 
 ### Windows
 
 ```bash
-python -m venv venv
 venv\Scripts\activate
 ```
 
@@ -86,167 +128,181 @@ pip install -r requirements.txt
 
 ---
 
-## Usage
+# 🚀 Usage
 
-Basic sequence analysis
+## Basic Analysis
 
 ```bash
 python fasta_analyzer.py sample_data/human_gene.fasta
 ```
 
-Export report
-
-```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---output output/report.txt
-```
-
 ---
 
-## Motif Search
-
-Search for a DNA motif
+## Search DNA Motif
 
 ```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---find ATG
+python fasta_analyzer.py sample_data/human_gene.fasta --find ATG
 ```
 
 ---
 
 ## Restriction Enzyme Analysis
 
-Example
-
 ```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---enzyme EcoRI
-```
-
-Supported enzymes include:
-
-- EcoRI
-- BamHI
-- HindIII
-- NotI
-- XhoI
-
----
-
-## Open Reading Frame (ORF) Analysis
-
-Analyze ORFs in a single reading frame
-
-```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---orf \
---frame 1
-```
-
-Analyze all three forward reading frames
-
-```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---orf \
---frame all \
---min-length 300 \
---top 3
-```
-
-Example Output
-
-```
-Frame +1
-Longest ORF : 465 bp
-
-Frame +2
-Longest ORF : 402 bp
-
-Frame +3
-Longest ORF : 333 bp
+python fasta_analyzer.py sample_data/human_gene.fasta --enzyme EcoRI
 ```
 
 ---
 
-## Command Line Options
+## Open Reading Frame Analysis
+
+Single frame
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --orf
+```
+
+All three reading frames
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --orf --frame all
+```
+
+Specify minimum ORF length
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --orf --frame all --min-length 300
+```
+
+---
+
+## Generate Visualizations
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --plot
+```
+
+Generate plots together with ORF analysis
+
+```bash
+python fasta_analyzer.py sample_data/human_gene.fasta --plot --orf --frame all
+```
+
+---
+
+# 🖥 Command-Line Options
 
 | Option | Description |
 |---------|-------------|
-| input | FASTA file |
-| --output | Save report to file |
-| --find | Search DNA motif |
-| --enzyme | Restriction enzyme analysis |
-| --orf | Perform ORF analysis |
-| --frame | Reading frame (1, 2, 3, all) |
-| --min-length | Minimum ORF length |
-| --top | Display top N ORFs |
+| `--find` | Search for a DNA motif |
+| `--enzyme` | Search restriction enzyme recognition sites |
+| `--orf` | Perform ORF analysis |
+| `--frame` | Select reading frame (1, 2, 3 or all) |
+| `--min-length` | Minimum ORF length |
+| `--top` | Number of ORFs displayed |
+| `--plot` | Generate visualization figures |
+| `--output` | Save report to a text file |
 
 ---
 
-## Example Workflow
+# 📈 Example Visualizations
 
-```bash
-python fasta_analyzer.py sample_data/human_gene.fasta \
---orf \
---frame all \
---min-length 300 \
---top 5 \
---output output/orf_report.txt
-```
+## 🧬 DNA Nucleotide Composition
+
+Displays the nucleotide frequency (A, T, G, and C) of the analyzed DNA sequence.
+
+![DNA Nucleotide Composition](screenshots/nucleotide_counts.png)
 
 ---
 
-## Screenshots
+## 📈 Sliding Window GC Content
 
-### Sequence Analysis
+Visualizes GC percentage variation across the genome using a sliding window approach.
 
-![Sequence Analysis](screenshots/analyzer_output.png)
+![Sliding Window GC Content](screenshots/gc_content.png)
 
 ---
 
-### Motif Search
+## 🧬 ORF Comparison
+
+Compares the longest Open Reading Frames identified in each reading frame.
+
+![ORF Comparison](screenshots/orf_comparison.png)
+
+---
+
+## 🗺️ Genome-wide ORF Overview
+
+Shows the genomic locations of detected Open Reading Frames across reading frames.
+
+![ORF Overview](screenshots/orf_overview.png)
+
+---
+
+## 🔎 Motif Search Example
+
+Example output showing DNA motif detection and matching positions.
 
 ![Motif Search](screenshots/motif_search.png)
 
 ---
 
-### Restriction Enzyme Analysis
+## ✂️ Restriction Enzyme Analysis
 
-![Restriction Enzyme](screenshots/restriction_enzyme.png)
+Example showing restriction enzyme recognition site detection.
 
----
-
-### Three Reading Frame ORF Analysis
-
-![Three Frame ORF](screenshots/three_frame_orf.png)
+![Restriction Enzyme Analysis](screenshots/restriction_enzyme.png)
 
 ---
 
-## Technologies Used
+## 💻 Command-Line Output
+
+Example execution of the FASTA Sequence Analyzer from the terminal.
+
+![Terminal Output](screenshots/analyzer_output.png)
+
+# 🧪 Technologies Used
 
 - Python 3
 - Biopython
+- Matplotlib
 - argparse
 - pathlib
 
 ---
 
-## Future Improvements
+# 🎯 Future Improvements
 
-- Six-frame ORF analysis
-- Codon usage statistics
-- GC content sliding window analysis
-- Restriction enzyme maps
-- ORF visualization
-- Protein FASTA support
-- GenBank file support
-- Interactive HTML reports
+Planned features for future releases include:
+
+- Modular package architecture
+- HTML report generation
+- CSV export
+- Protein property analysis
+- Sequence alignment tools
+- Restriction enzyme visualization
+- Interactive plots
+- Automated unit testing
+- Continuous Integration (GitHub Actions)
 
 ---
 
-## License
+# 🤝 Contributing
 
-This project is released under the MIT License.
+Contributions, suggestions, and feature requests are welcome.
+
+If you would like to improve this project:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
+
+---
+
+# 📜 License
+
+This project is licensed under the MIT License.
 
 ---
 
