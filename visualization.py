@@ -146,6 +146,72 @@ def plot_nucleotide_counts(counts, output_file):
 
     plt.close()
 
+def plot_gc_content(positions, gc_values, output_file):
+    """
+    Plot sliding-window GC content across the sequence.
+    """
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+
+    ax.plot(
+        positions,
+        gc_values,
+        linewidth=2,
+        color="#2E7D32",
+    )
+
+    ax.fill_between(
+        positions,
+        gc_values,
+        alpha=0.25,
+        color="#66BB6A",
+    )
+
+    ax.set_title(
+        "Sliding Window GC Content",
+        fontsize=18,
+        fontweight="bold",
+    )
+
+    ax.set_xlabel(
+        "Genome Position (bp)",
+        fontsize=12,
+    )
+
+    ax.set_ylabel(
+        "GC Content (%)",
+        fontsize=12,
+    )
+
+    ax.set_ylim(0, 100)
+
+    ax.grid(
+        linestyle="--",
+        alpha=0.3,
+    )
+
+    plt.tight_layout()
+
+    output_path = Path(output_file)
+
+    output_path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    plt.savefig(
+        output_path,
+        dpi=300,
+        bbox_inches="tight",
+    )
+
+    plt.savefig(
+        output_path.with_suffix(".svg"),
+        bbox_inches="tight",
+    )
+
+    plt.close()
+
 def plot_orf_overview(orfs_by_frame, sequence_length, output_file):
     """
     Generate a publication-style ORF map.

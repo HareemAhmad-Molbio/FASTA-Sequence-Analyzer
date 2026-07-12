@@ -192,9 +192,40 @@ def find_orfs_in_frame(seq, frame=0, min_length=0):
                 "protein": protein,
                 "dna": dna,
             })
-            
+
             inside_orf = False
             start = None
             current_codons = []
 
             return orfs
+        
+def calculate_gc_windows(sequence, window_size=1000, step_size=500):
+    """
+    Calculate GC content across a sequence using a sliding window.
+
+    Returns
+    -------
+    positions : list[int]
+        Center position of each window.
+    gc_values : list[float]
+        GC percentage for each window.
+    """
+
+    positions = []
+    gc_values = []
+
+    sequence = sequence.upper()
+
+    for start in range(0, len(sequence) - window_size + 1, step_size):
+
+        window = sequence[start:start + window_size]
+
+        gc = window.count("G") + window.count("C")
+
+        gc_percent = (gc / len(window)) * 100
+
+        positions.append(start + window_size // 2)
+
+        gc_values.append(gc_percent)
+
+    return positions, gc_values

@@ -7,6 +7,7 @@ from visualization import (
     plot_nucleotide_counts,
     plot_orf_overview,
     plot_orf_comparison,
+    plot_gc_content,
 )
 
 from sequence_utils import (
@@ -18,8 +19,8 @@ from sequence_utils import (
     translate_protein,
     find_motif,
     find_restriction_sites,
-    find_longest_orf,
     find_orfs_in_frame,
+    calculate_gc_windows
 )
 
 try:
@@ -29,7 +30,6 @@ except ImportError:
     sys.exit(1)
 
 VALID_BASES = set("ACGTN")
-
 
 def read_fasta(path):
     return list(SeqIO.parse(path, "fasta"))
@@ -173,6 +173,10 @@ def main():
 
     records = read_fasta(str(fasta_path))
 
+    all_seq = "".join(str(record.seq) for record in records)
+
+    sequence_length = len(all_seq)
+
     counts = nucleotide_counts(records)
 
     if args.plot:
@@ -182,26 +186,19 @@ def main():
         )
         print("Visualization saved to: output/nucleotide_counts.png")
 
+        positions, gc_values = calculate_gc_windows(all_seq)
+
+        plot_gc_content(
+            positions,
+            gc_values,
+            "output/gc_content.png",
+        )
+        print("GC content plot saved to output/gc_content.png")
+
     errors = validate_fasta(records)
 
     report = summarize(records, str(fasta_path))
 
-    if args.find:
-        all_seq = "".join(str(record.seq) for record in records)
-
-        positions = find_motif(all_seq, args.find)
-
-        report += "\n\n"
-        report += "Motif Search\n"
-        report += "=" * 40 + "\n"
-        report += f"Motif: {args.find}\n"
-        report += f"Occurrences: {len(positions)}\n"
-
-        if positions:
-            report += "Positions:\n"
-            report += ", ".join(map(str, positions))
-        else:
-            report += "Motif not found."
 
     if errors:
         report += "\n\nValidation warnings:\n"
@@ -216,13 +213,26 @@ def main():
         out_path.write_text(report + "\n", encoding="utf-8")
 
     if args.find:
-       ...
-    else:
-        report += "Motif not found.\n"
+
+        positions = find_motif(
+            all_seq,
+            args.find,
+        )
+
+        report += "\n\n"
+        report += "Motif Search\n"
+        report += "=" * 40 + "\n"
+        report += f"Motif: {args.find}\n"
+        report += f"Occurrences: {len(positions)}\n"
+
+        if positions:
+            report += "Positions:\n"
+            report += ", ".join(map(str, positions))
+        else:
+            report += "Motif not found.\n"
 
 
     if args.enzyme:
-        all_seq = "".join(str(record.seq) for record in records)
 
         recognition_site, positions = find_restriction_sites(
         all_seq,
@@ -247,8 +257,6 @@ def main():
             report += "Recognition site not found."
 
     if args.orf:
-
-        all_seq = "".join(str(record.seq) for record in records)
 
         if args.frame == "all":
             frames = [0, 1, 2]
@@ -301,24 +309,22 @@ def main():
 
             report += "=" * 50 + "\n"
 
-    
-    if errors:
-        report += "\n\nValidation warnings:\n"
 
-    for err in errors:
-        report += f"- {err}\n"
 
-    if args.plot:
+    if args.plot and args.orf:
+        plot_orf_overview(
+            orfs_by_frame,
+            sequence_length,
+            "output/orf_overview.png",
+        )
+
         plot_orf_comparison(
-        orfs_by_frame,
-        "output/orf_comparison.png",
-    )
+            orfs_by_frame,
+            "output/orf_comparison.png",
+        )
     
 
     print(report)
-
-    if args.output:
-        ...
 
 if __name__ == "__main__":
     main()
